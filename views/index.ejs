@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件分享平台</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>文件分享平台</h1>
+    <nav>
+      <a href="/">首页</a>
+      <a href="/admin">管理</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2>可用文件</h2>
+    
+    <% if (files.length === 0) { %>
+      <p class="empty">暂无可用文件</p>
+    <% } else { %>
+      <div class="file-grid">
+        <% files.forEach(file => { %>
+          <div class="file-card">
+            <h3><%= file.name %></h3>
+            <div style="display: flex; align-items: center;">
+              <div class="links" style="flex:1;">
+                <% file.links.forEach(link => { %>
+                  <p>
+                    <a class="file-link-btn" href="<%= link.url %>" target="_blank"><%= link.label %></a>
+                  </p>
+                <% }); %>
+              </div>
+              <div class="file-icon" style="margin-left: 24px;">
+                <% if (file.icon) { %>
+                  <% if (file.icon.startsWith('fa-')) { %>
+                    <i class="fa-solid <%= file.icon %>" style="font-size: 80px; color: #6a5b8c;"></i>
+                  <% } else { %>
+                    <img src="<%= file.icon %>" alt="icon" width="200" height="200" style="object-fit:contain;border-radius:16px;">
+                  <% } %>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </main>
+
+  <footer>
+    <p>© 2025 文件分享平台 | Hakutyan</p>
+  </footer>
+</body>
+</html>

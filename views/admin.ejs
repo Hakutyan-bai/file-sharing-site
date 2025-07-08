@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文件管理 - 文件分享平台</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <header>
+    <h1>文件分享平台 - 管理</h1>
+    <nav>
+      <a href="/">首页</a>
+      <a href="/admin">管理</a>
+      <a href="/logout">退出</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <h2>文件管理</h2>
+    
+    <div class="admin-actions">
+      <button id="addFileBtn">添加新文件</button>
+      <button id="changeKeyBtn" style="margin-left:1rem;">修改登录密钥</button>
+    </div>
+    
+    <div id="fileForm" class="form-modal" style="display: none;">
+      <form id="fileFormContent">
+        <h3>添加新文件</h3>
+        <div class="form-group">
+          <label for="fileName">文件名称</label>
+          <input type="text" id="fileName" name="name" required>
+        </div>
+        <div class="form-group">
+          <label for="fileLinks">下载链接 (每行格式：名称|链接地址，例如：百度网盘|https://pan.baidu.com/xxx)</label>
+          <textarea id="fileLinks" name="links" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="fileIcon">卡片图标URL（200x200，支持网络图片或Font Awesome图标如 fa-box）</label>
+          <input type="text" id="fileIcon" name="icon" placeholder="如 fa-box">
+        </div>
+        <div class="form-actions">
+          <button type="button" id="cancelForm">取消</button>
+          <button type="submit">保存</button>
+        </div>
+      </form>
+    </div>
+    
+    <div class="file-grid">
+      <% files.forEach(file => { %>
+        <div class="file-card editable">
+          <div class="file-header">
+            <h3><%= file.name %></h3>
+            <div class="file-actions">
+              <button class="edit-btn" data-id="<%= file.id %>">编辑</button>
+              <a href="/delete-file/<%= file.id %>" class="delete-btn" data-id="<%= file.id %>">删除</a>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <div class="links" style="flex:1;">
+              <% file.links.forEach(link => { %>
+                <p>
+                  <a class="file-link-btn" href="<%= link.url %>" target="_blank"><%= link.label %></a>
+                </p>
+              <% }); %>
+            </div>
+            <div class="file-icon" style="margin-left: 24px;">
+              <% if (file.icon) { %>
+                <% if (file.icon.startsWith('fa-')) { %>
+                  <i class="fa-solid <%= file.icon %>" style="font-size: 80px; color: #6a5b8c;"></i>
+                <% } else { %>
+                  <img src="<%= file.icon %>" alt="icon" width="200" height="200" style="object-fit:contain;border-radius:16px;">
+                <% } %>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  </main>
+
+  <div id="deleteConfirmModal" class="form-modal" style="display:none;">
+    <form id="deleteConfirmForm" style="max-width:340px;">
+      <h3>确认删除</h3>
+      <p id="deleteFileName" style="margin-bottom:1.5rem;">你确定要删除该文件吗？此操作不可恢复。</p>
+      <div class="form-actions">
+        <button type="button" id="cancelDeleteBtn">取消</button>
+        <button type="submit" class="confirm-delete-btn" style="background: #ff5f6d; color: #fff;">确认删除</button>
+      </div>
+    </form>
+  </div>
+
+  <div id="changeKeyModal" class="form-modal" style="display:none;">
+    <form id="changeKeyForm" style="max-width:340px;">
+      <h3>修改登录密钥</h3>
+      <div class="form-group">
+        <label for="newLoginKey">新密钥</label>
+        <input type="text" id="newLoginKey" name="newLoginKey" required>
+      </div>
+      <div class="form-actions">
+        <button type="button" id="cancelChangeKeyBtn">取消</button>
+        <button type="submit" class="edit-btn">保存</button>
+      </div>
+    </form>
+  </div>
+
+  <footer>
+    <p>© 2025 文件分享平台 | Hakutyan</p>
+  </footer>
+  
+  <script src="/js/script.js"></script>
+</body>
+</html>
