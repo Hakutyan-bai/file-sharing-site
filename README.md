@@ -22,19 +22,19 @@
 
 ## 🏠 主页展示
 
-![](https://img.sakura.ink/file/AgACAgUAAyEGAASIHQfFAAMLaG0w1ehnsanshZ-w5bkRVL4yXQQAAmbIMRtK4GhXhWZwgC2fVwMBAAMCAAN3AAM2BA.png)
+![主页](https://img.sakura.ink/file/AgACAgUAAyEGAASIHQfFAAMLaG0w1ehnsanshZ-w5bkRVL4yXQQAAmbIMRtK4GhXhWZwgC2fVwMBAAMCAAN3AAM2BA.png)
 
 ---
 
 ## 🛠️ 管理页面展示
 
-![](https://img.sakura.ink/file/AgACAgUAAyEGAASIHQfFAAMNaG0w1gMwjsmu36mN0n6_0-p2_KcAAmjIMRtK4GhXjRqmBUCteKUBAAMCAAN3AAM2BA.png)
+![管理页](https://img.sakura.ink/file/AgACAgUAAyEGAASIHQfFAAMNaG0w1gMwjsmu36mN0n6_0-p2_KcAAmjIMRtK4GhXjRqmBUCteKUBAAMCAAN3AAM2BA.png)
 
 ---
 
 ## ✏️ 编辑页面展示
 
-![](https://img.sakura.ink/file/AgACAgUAAyEGAASIHQfFAAMMaG0w1rUyTHAc0w4iVoixN1FiciEAAmfIMRtK4GhXpTSCgNY9TK0BAAMCAAN3AAM2BA.png)
+![编辑](https://img.sakura.ink/file/AgACAgUAAyEGAASIHQfFAAMMaG0w1rUyTHAc0w4iVoixN1FiciEAAmfIMRtK4GhXpTSCgNY9TK0BAAMCAAN3AAM2BA.png)
 
 ---
 
