@@ -1,8 +1,9 @@
 {
   "loginKey": "admin",
   "postUrls": {
-    "fileAdd": "https://example.com",
-    "fileEdit": "https://example.com",
-    "fileDelete": "https://example.com"
-  }
+    "fileAdd": "https://127704.xyz/api/push/ENy9Q2eKvnv1EF6K",
+    "fileEdit": "https://127704.xyz/api/push/6rNqKBTVAJb7917n",
+    "fileDelete": "https://127704.xyz/api/push/iNAErwIX3niMMdU0"
+  },
+  "push": "文件下载地址"
 }

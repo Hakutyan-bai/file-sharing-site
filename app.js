@@ -9,39 +9,6 @@ const https = require('https');
 const axios = require('axios');
 
 
-
-
-
-// // 通过axios发送post请求
-// function sendupfile() {
-//   axios.post('https://127704.xyz/api/push/ENy9Q2eKvnv1EF6K', {})
-//     .then(response => {
-//       console.log('文件添加通知成功:', response.status);
-//     })
-//     .catch(error => {
-//       console.error('文件添加通知失败:', error.message);
-//     });
-// }
-// function senddownfile() {
-//   axios.post('https://127704.xyz/api/push/iNAErwIX3niMMdU0', {})
-//     .then(response => {
-//       console.log('文件删除通知成功:', response.status);
-//     })
-//     .catch(error => {
-//       console.error('文件删除通知失败:', error.message);
-//     });
-// }
-// function sendeditfile() {
-//   axios.post('https://127704.xyz/api/push/6rNqKBTVAJb7917n', {})
-//     .then(response => {
-//       console.log('文件修改通知成功:', response.status);
-//     })
-//     .catch(error => {
-//       console.error('文件修改通知失败:', error.message);
-//     });
-// }
-
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -120,14 +87,24 @@ function saveConfig(config) {
 const config = readConfig();
 let LOGIN_KEY = config.loginKey;
 
+// 读取推送地址配置
 const POST_URLS = config.postUrls || {};
+// POST
+// 在修改文件中fileName是旧文件名，newfileName是新文件名
+// 添加和删除文件中fileName是文件名
+// 例：
+// 删除了文件：[${body.fileName}]
+// 添加了文件：[${body.fileName}]
+// ${body.fileName}${body.newfileName}
 
-function sendPush(url, label = '') {
+
+
+function sendPush(url, label = '', fileName = '', newfileName = '') {
   if (!url) {
     console.warn(`未配置 ${label} 通知 URL`);
     return;
   }
-  axios.post(url, {})
+  axios.post(url, { fileName, newfileName, label })
     .then(res => console.log(`[${label}] 通知成功: ${res.status}`))
     .catch(err => console.error(`[${label}] 通知失败:`, err.message));
 }
@@ -171,6 +148,8 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
+
+
 app.post('/add-file', (req, res) => {
   if (!req.session.isLoggedIn) {
     return res.status(401).send('未授权');
@@ -192,7 +171,7 @@ app.post('/add-file', (req, res) => {
   files.push(newFile);
   saveFiles(files);
   //sendupfile(); // 发送文件添加通知
-  sendPush(POST_URLS.fileAdd, '添加文件');
+  sendPush(POST_URLS.fileAdd, '添加文件', newFile.name);
   res.redirect('/admin');
 });
 
@@ -205,6 +184,8 @@ app.post('/update-file/:id', (req, res) => {
   const files = readFiles();
   const fileIndex = files.findIndex(file => file.id === id);
   if (fileIndex !== -1) {
+    const oldName = files[fileIndex].name;
+    const oldLinks = files[fileIndex].links ? JSON.parse(JSON.stringify(files[fileIndex].links)) : [];
     files[fileIndex].name = name;
     files[fileIndex].links = links
       .split('\n')
@@ -214,9 +195,29 @@ app.post('/update-file/:id', (req, res) => {
       })
       .filter(link => link.url);
     files[fileIndex].icon = icon || '';
-    //sendeditfile(); // 发送文件修改通知
-    sendPush(POST_URLS.fileEdit, '编辑文件');
     saveFiles(files);
+
+    // 检查下载地址是否有变化
+    const newLinks = files[fileIndex].links;
+    const oldLinksStr = JSON.stringify(oldLinks);
+    const newLinksStr = JSON.stringify(newLinks);
+    if (oldLinksStr !== newLinksStr) {
+      
+      // 下载地址有变化，发送通知
+      sendPush(
+        POST_URLS.fileEdit,
+        '编辑文件下载地址',
+        '文件：['+name + ']地址已变更'
+      );
+    } else {
+      // 仅名称或图标变化
+      sendPush(
+        POST_URLS.fileEdit,
+        '编辑文件',
+        '文件：['+oldName + ']新名称为',
+        '：['+name + ']'
+      );
+    }
   }
   res.redirect('/admin');
 });
@@ -228,11 +229,10 @@ app.get('/delete-file/:id', (req, res) => {
   
   const { id } = req.params;
   let files = readFiles();
-  
+  const deletedFile = files.find(file => file.id === id); // 先获取被删文件
   files = files.filter(file => file.id !== id);
   saveFiles(files);
-  sendPush(POST_URLS.fileDelete, '删除文件');
-  //senddownfile(); // 发送文件删除通知
+  sendPush(POST_URLS.fileDelete, '删除文件', deletedFile ? deletedFile.name : '');
   res.redirect('/admin');
 });
 
