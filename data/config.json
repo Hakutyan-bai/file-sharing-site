@@ -1,3 +1,8 @@
 {
-  "loginKey": "admin"
+  "loginKey": "admin",
+  "postUrls": {
+    "fileAdd": "https://example.com",
+    "fileEdit": "https://example.com",
+    "fileDelete": "https://example.com"
+  }
 }

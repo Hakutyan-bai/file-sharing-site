@@ -154,4 +154,46 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .catch(() => alert('修改失败，请重试'));
   };
+  
+  // 编辑推送地址弹窗逻辑
+  const editPushUrlBtn = document.getElementById('editPushUrlBtn');
+  const editPushUrlModal = document.getElementById('editPushUrlModal');
+  const editPushUrlForm = document.getElementById('editPushUrlForm');
+  const cancelEditPushUrlBtn = document.getElementById('cancelEditPushUrlBtn');
+
+  if (editPushUrlBtn) {
+    editPushUrlBtn.onclick = function() {
+      // 预填充
+      const urls = window.PUSH_URLS || {};
+      document.getElementById('pushAddUrl').value = urls.fileAdd || '';
+      document.getElementById('pushEditUrl').value = urls.fileEdit || '';
+      document.getElementById('pushDeleteUrl').value = urls.fileDelete || '';
+      editPushUrlModal.style.display = 'flex';
+    };
+  }
+  if (cancelEditPushUrlBtn) {
+    cancelEditPushUrlBtn.onclick = function() {
+      editPushUrlModal.style.display = 'none';
+    };
+  }
+  if (editPushUrlForm) {
+    editPushUrlForm.onsubmit = function(e) {
+      e.preventDefault();
+      const fileAdd = document.getElementById('pushAddUrl').value.trim();
+      const fileEdit = document.getElementById('pushEditUrl').value.trim();
+      const fileDelete = document.getElementById('pushDeleteUrl').value.trim();
+      fetch('/update-push-urls', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fileAdd, fileEdit, fileDelete })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.message || '保存成功');
+        window.PUSH_URLS = { fileAdd, fileEdit, fileDelete };
+        editPushUrlModal.style.display = 'none';
+      })
+      .catch(() => alert('保存失败，请重试'));
+    };
+  }
 });

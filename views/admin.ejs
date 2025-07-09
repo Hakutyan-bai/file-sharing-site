@@ -22,6 +22,7 @@
     
     <div class="admin-actions">
       <button id="addFileBtn">添加新文件</button>
+      <button id="editPushUrlBtn" style="margin-left:1rem;">编辑推送地址</button>
       <button id="changeKeyBtn" style="margin-left:1rem;">修改登录密钥</button>
     </div>
     
@@ -105,10 +106,36 @@
     </form>
   </div>
 
+  <!-- 推送地址编辑弹窗 -->
+  <div id="editPushUrlModal" class="form-modal" style="display:none;">
+    <form id="editPushUrlForm" style="max-width:400px;">
+      <h3>编辑推送地址</h3>
+      <div class="form-group">
+        <label for="pushAddUrl">新增文件通知地址</label>
+        <input type="text" id="pushAddUrl" name="fileAdd" placeholder="如 https://xxx" required>
+      </div>
+      <div class="form-group">
+        <label for="pushEditUrl">修改文件通知地址</label>
+        <input type="text" id="pushEditUrl" name="fileEdit" placeholder="如 https://xxx" required>
+      </div>
+      <div class="form-group">
+        <label for="pushDeleteUrl">删除文件通知地址</label>
+        <input type="text" id="pushDeleteUrl" name="fileDelete" placeholder="如 https://xxx" required>
+      </div>
+      <div class="form-actions">
+        <button type="button" id="cancelEditPushUrlBtn">取消</button>
+        <button type="submit" class="edit-btn">保存</button>
+      </div>
+    </form>
+  </div>
+
   <footer>
     <p>© 2025 文件分享平台 | Hakutyan</p>
   </footer>
   
-  <script src="/js/script.js"></script>
+  <script>
+window.PUSH_URLS = <%- JSON.stringify(typeof POST_URLS !== 'undefined' ? POST_URLS : (typeof postUrls !== 'undefined' ? postUrls : {})) %>;
+</script>
+<script src="/js/script.js"></script>
 </body>
 </html>

@@ -4,6 +4,44 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
 
+const https = require('https');
+
+const axios = require('axios');
+
+
+
+
+
+// // 通过axios发送post请求
+// function sendupfile() {
+//   axios.post('https://127704.xyz/api/push/ENy9Q2eKvnv1EF6K', {})
+//     .then(response => {
+//       console.log('文件添加通知成功:', response.status);
+//     })
+//     .catch(error => {
+//       console.error('文件添加通知失败:', error.message);
+//     });
+// }
+// function senddownfile() {
+//   axios.post('https://127704.xyz/api/push/iNAErwIX3niMMdU0', {})
+//     .then(response => {
+//       console.log('文件删除通知成功:', response.status);
+//     })
+//     .catch(error => {
+//       console.error('文件删除通知失败:', error.message);
+//     });
+// }
+// function sendeditfile() {
+//   axios.post('https://127704.xyz/api/push/6rNqKBTVAJb7917n', {})
+//     .then(response => {
+//       console.log('文件修改通知成功:', response.status);
+//     })
+//     .catch(error => {
+//       console.error('文件修改通知失败:', error.message);
+//     });
+// }
+
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -82,6 +120,20 @@ function saveConfig(config) {
 const config = readConfig();
 let LOGIN_KEY = config.loginKey;
 
+const POST_URLS = config.postUrls || {};
+
+function sendPush(url, label = '') {
+  if (!url) {
+    console.warn(`未配置 ${label} 通知 URL`);
+    return;
+  }
+  axios.post(url, {})
+    .then(res => console.log(`[${label}] 通知成功: ${res.status}`))
+    .catch(err => console.error(`[${label}] 通知失败:`, err.message));
+}
+
+
+
 // 路由处理
 app.get('/', (req, res) => {
   const files = readFiles();
@@ -110,7 +162,7 @@ app.get('/admin', (req, res) => {
   }
   
   const files = readFiles();
-  res.render('admin', { files });
+  res.render('admin', { files, POST_URLS });
 });
 
 // 添加退出路由
@@ -139,6 +191,8 @@ app.post('/add-file', (req, res) => {
   };
   files.push(newFile);
   saveFiles(files);
+  //sendupfile(); // 发送文件添加通知
+  sendPush(POST_URLS.fileAdd, '添加文件');
   res.redirect('/admin');
 });
 
@@ -160,6 +214,8 @@ app.post('/update-file/:id', (req, res) => {
       })
       .filter(link => link.url);
     files[fileIndex].icon = icon || '';
+    //sendeditfile(); // 发送文件修改通知
+    sendPush(POST_URLS.fileEdit, '编辑文件');
     saveFiles(files);
   }
   res.redirect('/admin');
@@ -175,7 +231,8 @@ app.get('/delete-file/:id', (req, res) => {
   
   files = files.filter(file => file.id !== id);
   saveFiles(files);
-  
+  sendPush(POST_URLS.fileDelete, '删除文件');
+  //senddownfile(); // 发送文件删除通知
   res.redirect('/admin');
 });
 
@@ -191,6 +248,24 @@ app.post('/change-login-key', (req, res) => {
   config.loginKey = LOGIN_KEY;
   saveConfig(config);
   res.json({ message: '登录密钥已修改' });
+});
+
+// 新增：推送地址编辑接口
+app.post('/update-push-urls', (req, res) => {
+  if (!req.session.isLoggedIn) return res.status(403).json({ message: '未授权' });
+  const { fileAdd, fileEdit, fileDelete } = req.body;
+  const config = readConfig();
+  config.postUrls = {
+    fileAdd: fileAdd || '',
+    fileEdit: fileEdit || '',
+    fileDelete: fileDelete || ''
+  };
+  saveConfig(config);
+  // 更新内存中的 POST_URLS
+  POST_URLS.fileAdd = fileAdd || '';
+  POST_URLS.fileEdit = fileEdit || '';
+  POST_URLS.fileDelete = fileDelete || '';
+  res.json({ message: '推送地址已保存' });
 });
 
 // 初始化并启动服务器
