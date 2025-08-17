@@ -54,10 +54,10 @@ node app.js
 
 ---
 
-## 📚 项目地址
+## 📚 关于推送服务的项目地址
 
 - GitHub 项目主页：[https://github.com/beilunyang/moepush](https://github.com/beilunyang/moepush)
 
 如果你也觉得这个项目有趣又实用，不妨 Star 一下支持作者！
 
- 本项目适合入门练习，界面简洁，功能实用。如需增加权限分级等，可自行扩展。
+ 本项目适合入门练习，界面简洁，功能实用。
